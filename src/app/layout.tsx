@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import PWARegister from "@/components/PWARegister";
+import ClientOnlyPWA from "@/components/ClientOnlyPWA";
 
 export const metadata: Metadata = {
   title: "Sabores de Zissou - Confeitaria Artesanal",
@@ -33,6 +33,7 @@ export function generateViewport() {
     initialScale: 1,
     maximumScale: 1,
     themeColor: '#ec4899',
+    viewportFit: 'cover'
   }
 }
 
@@ -54,7 +55,7 @@ export default function RootLayout({
         <meta name="msapplication-tap-highlight" content="no" />
       </head>
       <body className="bg-pastel-vanilla min-h-screen">
-        <PWARegister />
+        <ClientOnlyPWA />
         {children}
       </body>
     </html>

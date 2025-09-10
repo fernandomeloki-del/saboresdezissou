@@ -1,18 +1,5 @@
-'use client';
-
-// Página 404 - Client Component puro sem metadata
-
+// Página 404 estática simples
 export default function NotFound() {
-  const handleGoBack = () => {
-    if (typeof window !== 'undefined') {
-      if (window.history.length > 1) {
-        window.history.back();
-      } else {
-        window.location.href = '/';
-      }
-    }
-  };
-
   return (
     <div style={{
       margin: 0, 
@@ -48,30 +35,11 @@ export default function NotFound() {
               color: 'white', 
               borderRadius: '8px', 
               textDecoration: 'none',
-              fontWeight: '500',
-              transition: 'background-color 0.2s'
+              fontWeight: '500'
             }}
           >
             🏠 Voltar ao Início
           </a>
-          
-          <button 
-            onClick={handleGoBack}
-            style={{
-              display: 'flex', 
-              alignItems: 'center', 
-              justifyContent: 'center',
-              width: '100%',
-              padding: '8px 16px', 
-              color: '#92400e', 
-              backgroundColor: 'transparent',
-              border: 'none',
-              cursor: 'pointer',
-              transition: 'color 0.2s'
-            }}
-          >
-            ← Voltar à página anterior
-          </button>
         </div>
 
         <div style={{marginTop: '32px', fontSize: '14px', color: '#a16207'}}>
