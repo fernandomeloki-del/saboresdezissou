@@ -1,11 +1,13 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
-import { MessageCircle, Phone, MapPin } from 'lucide-react';
+import { MessageCircle, Phone, MapPin, Bell } from 'lucide-react';
+import NotificationManager from '@/components/NotificationManager';
 
 const FaleConosco: React.FC = () => {
+  const [showNotifications, setShowNotifications] = useState(false);
   const whatsappNumber = '5511981047422';
   const whatsappMessage = encodeURIComponent('Olá! Gostaria de tirar uma dúvida sobre os produtos da Sabores de Zissou.');
 
@@ -63,7 +65,45 @@ const FaleConosco: React.FC = () => {
             </div>
           </CardContent>
         </Card>
+        
+        {/* Botão de Notificações */}
+        <div className="text-center mt-6">
+          <Button 
+            onClick={() => setShowNotifications(!showNotifications)}
+            variant="outline"
+            size="lg"
+            className="bg-white/80 hover:bg-white border-primary-300 text-primary-700 hover:text-primary-800"
+          >
+            <Bell className="w-5 h-5 mr-2" />
+            Ativar Notificações
+          </Button>
+          <p className="text-xs text-primary-600 mt-2">
+            Receba avisos sobre novos produtos e promoções
+          </p>
+        </div>
       </div>
+      
+      {/* Modal de Notificações */}
+      {showNotifications && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-xl max-w-md w-full max-h-[80vh] overflow-y-auto">
+            <div className="p-4 border-b flex justify-between items-center">
+              <h3 className="font-display text-xl font-bold text-primary-800">
+                Notificações
+              </h3>
+              <button
+                onClick={() => setShowNotifications(false)}
+                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+              >
+                ×
+              </button>
+            </div>
+            <div className="p-4">
+              <NotificationManager isAdmin={false} />
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 };

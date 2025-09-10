@@ -14,7 +14,8 @@ CREATE TABLE IF NOT EXISTS admin_users (
 -- 2. Habilitar RLS
 ALTER TABLE admin_users ENABLE ROW LEVEL SECURITY;
 
--- 3. Criar política permissiva (para desenvolvimento)
+-- 3. Remover política se existir e criar nova
+DROP POLICY IF EXISTS "allow_all_operations_on_admin_users" ON admin_users;
 CREATE POLICY "allow_all_operations_on_admin_users" 
 ON admin_users 
 FOR ALL 
@@ -22,11 +23,11 @@ USING (true)
 WITH CHECK (true);
 
 -- 4. Inserir admin padrão (senha: admin123)
--- Hash da senha 'admin123' usando bcrypt
+-- Senha em texto simples para simplicidade inicial
 INSERT INTO admin_users (email, password_hash, name) 
 VALUES (
   'admin@sabores.com', 
-  '$2a$10$XGKx3lP5Y7G8V6l1WQhZQOxYQ9XzKbLH9Qp1NmVvDlEeZz2F3J4K6',
+  'admin123',
   'Administrador Sabores de Zissou'
 )
 ON CONFLICT (email) DO NOTHING;
@@ -42,7 +43,8 @@ CREATE TABLE IF NOT EXISTS system_config (
 -- 6. Habilitar RLS para configurações
 ALTER TABLE system_config ENABLE ROW LEVEL SECURITY;
 
--- 7. Política para configurações
+-- 7. Remover política se existir e criar nova para configurações
+DROP POLICY IF EXISTS "allow_all_operations_on_system_config" ON system_config;
 CREATE POLICY "allow_all_operations_on_system_config" 
 ON system_config 
 FOR ALL 

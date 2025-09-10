@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
-import * as bcrypt from 'bcryptjs';
 
 export async function POST(request: NextRequest) {
   try {
@@ -20,10 +19,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Verificar senha (para compatibilidade, aceitar tanto hash quanto texto simples)
+    // Verificar senha (temporariamente aceitar tanto hash quanto texto simples)
     const isValidPassword = 
-      adminUser.password_hash === password || // Temporário: senha em texto simples
-      (adminUser.password_hash.startsWith('$2a$') && await bcrypt.compare(password, adminUser.password_hash)); // Hash bcrypt
+      adminUser.password_hash === password || // Senha em texto simples (temporário)
+      adminUser.password_hash === btoa(password); // Base64 básico
 
     if (isValidPassword) {
       return NextResponse.json(
