@@ -87,8 +87,10 @@ export default function PWARegister() {
 
   const handleDismiss = () => {
     setShowInstallPrompt(false);
-    // Mostrar novamente em 24 horas
-    localStorage.setItem('pwa-install-dismissed', Date.now().toString());
+    // Mostrar novamente em 24 horas (apenas no cliente)
+    if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+      localStorage.setItem('pwa-install-dismissed', Date.now().toString());
+    }
   };
 
   // Não mostrar se já estiver instalado
@@ -96,13 +98,15 @@ export default function PWARegister() {
     return null;
   }
 
-  // Verificar se foi dispensado recentemente
-  const dismissedTime = localStorage.getItem('pwa-install-dismissed');
-  if (dismissedTime) {
-    const timeDiff = Date.now() - parseInt(dismissedTime);
-    const oneDayInMs = 24 * 60 * 60 * 1000;
-    if (timeDiff < oneDayInMs) {
-      return null;
+  // Verificar se foi dispensado recentemente (apenas no cliente)
+  if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+    const dismissedTime = localStorage.getItem('pwa-install-dismissed');
+    if (dismissedTime) {
+      const timeDiff = Date.now() - parseInt(dismissedTime);
+      const oneDayInMs = 24 * 60 * 60 * 1000;
+      if (timeDiff < oneDayInMs) {
+        return null;
+      }
     }
   }
 

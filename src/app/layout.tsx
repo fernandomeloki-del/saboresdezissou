@@ -15,12 +15,6 @@ export const metadata: Metadata = {
     telephone: false,
   },
   manifest: "/manifest.json",
-  themeColor: "#ec4899",
-  viewport: {
-    width: "device-width",
-    initialScale: 1,
-    maximumScale: 1,
-  },
   icons: {
     icon: "/icon-192x192.png",
     shortcut: "/favicon.ico",
@@ -32,6 +26,15 @@ export const metadata: Metadata = {
     title: "Sabores de Zissou",
   },
 };
+
+export function generateViewport() {
+  return {
+    width: 'device-width',
+    initialScale: 1,
+    maximumScale: 1,
+    themeColor: '#ec4899',
+  }
+}
 
 export default function RootLayout({
   children,

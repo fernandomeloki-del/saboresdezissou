@@ -26,9 +26,13 @@ const DynamicLogo: React.FC<DynamicLogoProps> = ({
           setLogoUrl(config.siteLogo);
         }
       } catch {
-        // Fallback para localStorage ou padrão
-        const savedLogo = localStorage.getItem('SITE_LOGO');
-        setLogoUrl(savedLogo || '/icon-192x192.png');
+        // Fallback para localStorage ou padrão (apenas no cliente)
+        if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+          const savedLogo = localStorage.getItem('SITE_LOGO');
+          setLogoUrl(savedLogo || '/icon-192x192.png');
+        } else {
+          setLogoUrl('/icon-192x192.png');
+        }
       }
     };
 

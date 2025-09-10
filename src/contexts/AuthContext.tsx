@@ -24,10 +24,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Verificar se existe uma sessão salva
-    const savedAuth = localStorage.getItem('admin_authenticated');
-    if (savedAuth === 'true') {
-      setIsAuthenticated(true);
+    // Verificar se existe uma sessão salva (apenas no cliente)
+    if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+      const savedAuth = localStorage.getItem('admin_authenticated');
+      if (savedAuth === 'true') {
+        setIsAuthenticated(true);
+      }
     }
     setLoading(false);
   }, []);
@@ -46,7 +48,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       if (response.ok && result.success) {
         setIsAuthenticated(true);
-        localStorage.setItem('admin_authenticated', 'true');
+        if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+          localStorage.setItem('admin_authenticated', 'true');
+        }
         return true;
       }
       
@@ -59,7 +63,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const logout = () => {
     setIsAuthenticated(false);
-    localStorage.removeItem('admin_authenticated');
+    if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+      localStorage.removeItem('admin_authenticated');
+    }
   };
 
   const value = {

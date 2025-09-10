@@ -43,15 +43,25 @@ const SystemSettings: React.FC = () => {
       }
     } catch (error) {
       console.error('Erro ao carregar configurações:', error);
-      // Fallback para localStorage
-      const currentConfig = {
-        webhookUrl: localStorage.getItem('WEBHOOK_URL') || '',
-        adminEmail: localStorage.getItem('ADMIN_EMAIL') || 'admin@sabores.com',
-        adminPassword: '',
-        siteLogo: localStorage.getItem('SITE_LOGO') || '/icon-192x192.png',
-        appIcon: localStorage.getItem('APP_ICON') || '/icon-512x512.png'
-      };
-      setConfig(currentConfig);
+      // Fallback para localStorage (apenas no cliente)
+      if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+        const currentConfig = {
+          webhookUrl: localStorage.getItem('WEBHOOK_URL') || '',
+          adminEmail: localStorage.getItem('ADMIN_EMAIL') || 'admin@sabores.com',
+          adminPassword: '',
+          siteLogo: localStorage.getItem('SITE_LOGO') || '/icon-192x192.png',
+          appIcon: localStorage.getItem('APP_ICON') || '/icon-512x512.png'
+        };
+        setConfig(currentConfig);
+      } else {
+        setConfig({
+          webhookUrl: '',
+          adminEmail: 'admin@sabores.com',
+          adminPassword: '',
+          siteLogo: '/icon-192x192.png',
+          appIcon: '/icon-512x512.png'
+        });
+      }
     }
   };
 
