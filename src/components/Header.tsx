@@ -1,11 +1,61 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Heart, Phone, MapPin, Bell } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Heart, Phone, MapPin, Bell, Download } from 'lucide-react';
 import NotificationManager from '@/components/NotificationManager';
+
+interface BeforeInstallPromptEvent extends Event {
+  readonly platforms: string[];
+  readonly userChoice: Promise<{
+    outcome: 'accepted' | 'dismissed';
+    platform: string;
+  }>;
+  prompt(): Promise<void>;
+}
 
 const Header: React.FC = () => {
   const [showNotifications, setShowNotifications] = useState(false);
+  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
+  const [isStandalone, setIsStandalone] = useState(false);
+
+  useEffect(() => {
+    // Verificar se já está instalado
+    const checkStandalone = () => {
+      const isStandaloneMode = window.matchMedia('(display-mode: standalone)').matches;
+      const isIOSStandalone = (window.navigator as any).standalone === true;
+      setIsStandalone(isStandaloneMode || isIOSStandalone);
+    };
+
+    checkStandalone();
+
+    // Capturar evento de instalação
+    const handleBeforeInstallPrompt = (e: Event) => {
+      e.preventDefault();
+      const event = e as BeforeInstallPromptEvent;
+      setDeferredPrompt(event);
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+
+    // Detectar quando o app foi instalado
+    window.addEventListener('appinstalled', () => {
+      setDeferredPrompt(null);
+      setIsStandalone(true);
+    });
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    };
+  }, []);
+
+  const handleInstallClick = async () => {
+    if (!deferredPrompt) return;
+
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    
+    setDeferredPrompt(null);
+  };
 
   return (
     <header className="bg-gradient-to-r from-pastel-cream via-pastel-vanilla to-pastel-blush shadow-sm">
@@ -21,6 +71,17 @@ const Header: React.FC = () => {
             >
               <Bell className="w-5 h-5" />
             </button>
+
+            {/* Botão de Instalação PWA */}
+            {deferredPrompt && !isStandalone && (
+              <button
+                onClick={handleInstallClick}
+                className="absolute right-0 p-2 text-primary-600 hover:text-primary-700 hover:bg-white/50 rounded-full transition-colors animate-pulse"
+                title="Instalar App"
+              >
+                <Download className="w-5 h-5" />
+              </button>
+            )}
             
             <div className="relative">
               {/* Logo SVG temporário */}

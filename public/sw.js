@@ -54,20 +54,26 @@ self.addEventListener('push', (event) => {
   console.log('📱 Push recebido:', event);
   
   let notificationData = {
-    title: 'Sabores de Zissou',
-    body: 'Nova notificação!',
+    title: '🍰 Sabores de Zissou',
+    body: 'Nova notificação disponível!',
     icon: '/icon-192x192.png',
     badge: '/icon-192x192.png',
     tag: 'sabores-notification',
-    requireInteraction: true,
+    requireInteraction: false,
+    silent: false,
+    vibrate: [200, 100, 200],
+    data: {
+      url: '/'
+    },
     actions: [
       {
         action: 'view',
-        title: '👀 Ver Detalhes'
+        title: '👀 Ver',
+        icon: '/icon-192x192.png'
       },
       {
         action: 'dismiss',
-        title: '❌ Dispensar'
+        title: '✖️ Fechar'
       }
     ]
   };
@@ -78,7 +84,10 @@ self.addEventListener('push', (event) => {
       const pushData = event.data.json();
       notificationData = {
         ...notificationData,
-        ...pushData
+        ...pushData,
+        data: {
+          url: pushData.actionUrl || '/'
+        }
       };
     } catch (error) {
       console.error('Erro ao processar dados push:', error);
@@ -97,10 +106,12 @@ self.addEventListener('notificationclick', (event) => {
   
   event.notification.close();
 
+  const targetUrl = event.notification.data?.url || '/';
+
   // Ação específica
   if (event.action === 'view') {
     event.waitUntil(
-      clients.openWindow('/')
+      clients.openWindow(targetUrl)
     );
   } else if (event.action === 'dismiss') {
     // Apenas fecha a notificação
@@ -108,16 +119,16 @@ self.addEventListener('notificationclick', (event) => {
   } else {
     // Clique na notificação (não nas ações)
     event.waitUntil(
-      clients.matchAll({ type: 'window' }).then((clientList) => {
+      clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
         // Se já há uma janela aberta, focar nela
         for (const client of clientList) {
-          if (client.url === self.location.origin && 'focus' in client) {
+          if (client.url.includes(self.location.origin) && 'focus' in client) {
             return client.focus();
           }
         }
         // Senão, abrir nova janela
         if (clients.openWindow) {
-          return clients.openWindow('/');
+          return clients.openWindow(targetUrl);
         }
       })
     );

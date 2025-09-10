@@ -46,12 +46,12 @@ export default function PWARegister() {
       const event = e as BeforeInstallPromptEvent;
       setDeferredPrompt(event);
       
-      // Mostrar prompt após 3 segundos se não estiver instalado
+      // Mostrar prompt imediatamente se PWA pode ser instalado
       setTimeout(() => {
         if (!isStandalone) {
           setShowInstallPrompt(true);
         }
-      }, 3000);
+      }, 1000); // Reduzido de 3 segundos para 1 segundo
     };
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);

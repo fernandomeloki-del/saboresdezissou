@@ -64,10 +64,38 @@ const NotificationManager: React.FC<NotificationManagerProps> = ({ isAdmin = fal
     if (!isSupported) return false;
 
     try {
+      // Verificar se já tem permissão
+      if (Notification.permission === 'granted') {
+        return true;
+      }
+
+      // Se estiver negado, não pode solicitar novamente
+      if (Notification.permission === 'denied') {
+        setMessage({
+          type: 'error',
+          text: 'Permissão para notificações foi negada. Ative nas configurações do navegador.'
+        });
+        return false;
+      }
+
+      // Solicitar permissão
       const permission = await Notification.requestPermission();
-      return permission === 'granted';
+      
+      if (permission === 'granted') {
+        return true;
+      } else {
+        setMessage({
+          type: 'error',
+          text: 'Permissão para notificações negada'
+        });
+        return false;
+      }
     } catch (error) {
       console.error('Erro ao solicitar permissão:', error);
+      setMessage({
+        type: 'error',
+        text: 'Erro ao solicitar permissão para notificações'
+      });
       return false;
     }
   };
@@ -77,14 +105,11 @@ const NotificationManager: React.FC<NotificationManagerProps> = ({ isAdmin = fal
 
     try {
       setLoading(true);
+      setMessage(null);
 
       // Solicitar permissão
       const hasPermission = await requestNotificationPermission();
       if (!hasPermission) {
-        setMessage({
-          type: 'error',
-          text: 'Permissão para notificações negada'
-        });
         return;
       }
 
@@ -114,7 +139,7 @@ const NotificationManager: React.FC<NotificationManagerProps> = ({ isAdmin = fal
       console.error('Erro ao se inscrever:', error);
       setMessage({
         type: 'error',
-        text: 'Erro ao ativar notificações'
+        text: 'Erro ao ativar notificações. Verifique se as permissões estão habilitadas.'
       });
     } finally {
       setLoading(false);
