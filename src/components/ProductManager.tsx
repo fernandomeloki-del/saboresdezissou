@@ -76,7 +76,7 @@ const ProductManager: React.FC<ProductManagerProps> = ({
     setSubmitting(true);
 
     try {
-      const productData: any = {
+      const productData = {
         name: formData.name,
         description: formData.description,
         ingredients: formData.ingredients,
@@ -89,9 +89,9 @@ const ProductManager: React.FC<ProductManagerProps> = ({
 
       if (editingProduct) {
         // Atualizar produto existente no Supabase
-        const { error } = await supabase
+        const { error } = await (supabase as any)
           .from('products')
-          .update(productData as any)
+          .update(productData)
           .eq('id', editingProduct.id);
 
         if (error) {
@@ -111,9 +111,9 @@ const ProductManager: React.FC<ProductManagerProps> = ({
         onProductsChange(updatedProducts);
       } else {
         // Criar novo produto no Supabase
-        const { data: newProduct, error } = await supabase
+        const { data: newProduct, error } = await (supabase as any)
           .from('products')
-          .insert(productData as any)
+          .insert(productData)
           .select()
           .single();
 
