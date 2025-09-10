@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+// Página 404 - Client Component puro sem metadata
 
 export default function NotFound() {
   const handleGoBack = () => {
@@ -12,13 +12,6 @@ export default function NotFound() {
       }
     }
   };
-
-  // Garantir que está no cliente
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      document.title = '404 - Página não encontrada | Sabores de Zissou';
-    }
-  }, []);
 
   return (
     <div style={{
