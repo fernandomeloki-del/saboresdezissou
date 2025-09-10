@@ -1,5 +1,7 @@
 'use client';
 
+import { useEffect } from 'react';
+
 export default function NotFound() {
   const handleGoBack = () => {
     if (typeof window !== 'undefined') {
@@ -10,6 +12,13 @@ export default function NotFound() {
       }
     }
   };
+
+  // Garantir que está no cliente
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      document.title = '404 - Página não encontrada | Sabores de Zissou';
+    }
+  }, []);
 
   return (
     <div style={{
