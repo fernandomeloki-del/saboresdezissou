@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useRef } from 'react';
+import Image from 'next/image';
 import Button from '@/components/ui/Button';
 import { Upload, X, Image as ImageIcon } from 'lucide-react';
 
@@ -98,11 +99,13 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           {images.map((image, index) => (
             <div key={index} className="relative group">
-              <div className="aspect-video bg-gray-100 rounded-lg overflow-hidden">
-                <img
+              <div className="aspect-video bg-gray-100 rounded-lg overflow-hidden relative">
+                <Image
                   src={image}
                   alt={`Produto ${index + 1}`}
-                  className="w-full h-full object-cover"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 50vw, 33vw"
                 />
               </div>
               <button
