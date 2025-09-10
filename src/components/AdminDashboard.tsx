@@ -73,16 +73,16 @@ const AdminDashboard: React.FC = () => {
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <div className="flex items-center">
-              <DynamicLogo size={32} className="mr-3" />
-              <h1 className="font-display text-xl font-bold text-primary-800">
+            <div className="flex items-center min-w-0">
+              <DynamicLogo size={32} className="mr-3 flex-shrink-0" />
+              <h1 className="font-display text-lg sm:text-xl font-bold text-primary-800 truncate">
                 Admin - Sabores de Zissou
               </h1>
             </div>
             
-            <Button onClick={handleLogout} variant="ghost" size="sm">
-              <LogOut className="w-4 h-4 mr-2" />
-              Sair
+            <Button onClick={handleLogout} variant="ghost" size="sm" className="flex-shrink-0">
+              <LogOut className="w-4 h-4 sm:mr-2" />
+              <span className="hidden sm:inline">Sair</span>
             </Button>
           </div>
         </div>
@@ -91,19 +91,19 @@ const AdminDashboard: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Navigation Tabs */}
         <div className="mb-8">
-          <nav className="flex space-x-1 bg-white rounded-lg p-1 shadow-sm">
+          <nav className="flex overflow-x-auto space-x-1 bg-white rounded-lg p-1 shadow-sm">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                className={`flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors whitespace-nowrap flex-shrink-0 ${
                   activeTab === tab.id
                     ? 'bg-primary-500 text-white'
                     : 'text-gray-600 hover:text-primary-600 hover:bg-pastel-cream'
                 }`}
               >
-                <tab.icon className="w-4 h-4 mr-2" />
-                {tab.label}
+                <tab.icon className="w-4 h-4 mr-1 sm:mr-2" />
+                <span className="hidden sm:inline">{tab.label}</span>
               </button>
             ))}
           </nav>

@@ -1,50 +1,41 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { readFile } from 'fs/promises';
-import { join } from 'path';
-
-interface AppConfig {
-  webhookUrl: string;
-  adminEmail: string;
-  adminPassword: string;
-  siteLogo: string;
-  appIcon: string;
-  companyName: string;
-  whatsapp: string;
-  pix: string;
-}
-
-const CONFIG_FILE = join(process.cwd(), 'app-config.json');
+import { supabase } from '@/lib/supabase';
+import * as bcrypt from 'bcryptjs';
 
 export async function POST(request: NextRequest) {
   try {
     const { email, password } = await request.json();
 
-    // Carregar configurações atuais (incluindo credenciais dinâmicas)
-    let config: AppConfig;
-    try {
-      const configData = await readFile(CONFIG_FILE, 'utf-8');
-      config = JSON.parse(configData);
-    } catch {
-      // Fallback para env vars se arquivo não existir
-      config = {
-        webhookUrl: '',
-        adminEmail: process.env.NEXT_PUBLIC_ADMIN_EMAIL || 'admin@sabores.com',
-        adminPassword: process.env.ADMIN_PASSWORD || 'admin123',
-        siteLogo: '/icon-192x192.png',
-        appIcon: '/icon-512x512.png',
-        companyName: 'Sabores de Zissou',
-        whatsapp: '5511981047422',
-        pix: '11981047422'
-      };
+    // Buscar usuário admin no Supabase
+    const { data: adminUser, error } = await supabase
+      .from('admin_users')
+      .select('*')
+      .eq('email', email)
+      .single();
+
+    if (error || !adminUser) {
+      return NextResponse.json(
+        { success: false, error: 'Credenciais inválidas' },
+        { status: 401 }
+      );
     }
 
-    // Verificar credenciais usando configurações dinâmicas
-    const adminEmail = config.adminEmail;
-    const adminPassword = config.adminPassword;
+    // Verificar senha (para compatibilidade, aceitar tanto hash quanto texto simples)
+    const isValidPassword = 
+      adminUser.password_hash === password || // Temporário: senha em texto simples
+      (adminUser.password_hash.startsWith('$2a$') && await bcrypt.compare(password, adminUser.password_hash)); // Hash bcrypt
 
-    if (email === adminEmail && password === adminPassword) {
+    if (isValidPassword) {
       return NextResponse.json(
-        { success: true, message: 'Login realizado com sucesso' },
+        { 
+          success: true, 
+          message: 'Login realizado com sucesso',
+          user: {
+            id: adminUser.id,
+            email: adminUser.email,
+            name: adminUser.name
+          }
+        },
         { status: 200 }
       );
     } else {
