@@ -48,12 +48,34 @@ const NotificationManager: React.FC<NotificationManagerProps> = ({ isAdmin = fal
     if (!isSupported) return;
 
     try {
+      // Primeiro verificar no localStorage
+      if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+        const savedStatus = localStorage.getItem('notifications-enabled');
+        if (savedStatus === 'true') {
+          setIsSubscribed(true);
+        }
+      }
+
       const registration = await navigator.serviceWorker.ready;
       const existingSubscription = await registration.pushManager.getSubscription();
       
       if (existingSubscription) {
         setIsSubscribed(true);
         setSubscription(existingSubscription);
+        
+        // Salvar no localStorage que está ativado
+        if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+          localStorage.setItem('notifications-enabled', 'true');
+        }
+      } else {
+        // Se não tem subscription mas localStorage diz que estava ativado, manter o status
+        if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+          const savedStatus = localStorage.getItem('notifications-enabled');
+          if (savedStatus !== 'true') {
+            setIsSubscribed(false);
+            setSubscription(null);
+          }
+        }
       }
     } catch (error) {
       console.error('Erro ao verificar status da inscrição:', error);
@@ -130,6 +152,12 @@ const NotificationManager: React.FC<NotificationManagerProps> = ({ isAdmin = fal
 
       setIsSubscribed(true);
       setSubscription(pushSubscription);
+      
+      // Salvar no localStorage que está ativado
+      if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+        localStorage.setItem('notifications-enabled', 'true');
+      }
+      
       setMessage({
         type: 'success',
         text: 'Notificações ativadas com sucesso!'
@@ -160,6 +188,12 @@ const NotificationManager: React.FC<NotificationManagerProps> = ({ isAdmin = fal
 
       setIsSubscribed(false);
       setSubscription(null);
+      
+      // Remover do localStorage
+      if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+        localStorage.removeItem('notifications-enabled');
+      }
+      
       setMessage({
         type: 'success',
         text: 'Notificações desativadas'

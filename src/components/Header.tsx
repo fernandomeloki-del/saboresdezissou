@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Heart, Phone, MapPin, Bell, Download } from 'lucide-react';
+import { Heart, Bell, Download } from 'lucide-react';
 import NotificationManager from '@/components/NotificationManager';
 
 interface BeforeInstallPromptEvent extends Event {
@@ -96,25 +96,13 @@ const Header: React.FC = () => {
             Sabores de Zissou
           </h1>
           <p className="text-primary-600 text-lg font-medium">
-            Confeitaria Artesanal
+            Confeitaria e Panificadora Artesanal
           </p>
           <p className="text-primary-500 text-sm mt-1">
             Doces feitos com amor e ingredientes selecionados
           </p>
         </div>
 
-        {/* Informações de Contato */}
-        <div className="flex flex-col sm:flex-row justify-center items-center gap-4 text-sm text-primary-700">
-          <div className="flex items-center gap-2">
-            <Phone className="w-4 h-4" />
-            <span>(11) 99999-9999</span>
-          </div>
-          <div className="hidden sm:block w-1 h-1 bg-primary-400 rounded-full"></div>
-          <div className="flex items-center gap-2">
-            <MapPin className="w-4 h-4" />
-            <span>São Paulo, SP</span>
-          </div>
-        </div>
       </div>
       
       {/* Modal de Notificações */}
